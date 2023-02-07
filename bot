@@ -1,0 +1,52 @@
+import requests
+import tweepy
+import time
+
+def check_model_availability():
+    # Replace this with your OpenAI API key
+    api_key = "your-api-key"
+
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+
+    response = requests.get("https://api.openai.com/v1/engines/language/availability", headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        status = data.get("status")
+        if status == "available":
+            return True
+        else:
+            return False
+    else:
+        return False
+
+def tweet_availability_update():
+    # Replace these with your Twitter API keys
+    consumer_key = "your-consumer-key"
+    consumer_secret = "your-consumer-secret"
+    access_token = "your-access-token"
+    access_token_secret = "your-access-token-secret"
+
+    # Authenticate to Twitter
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+
+    # Create API object
+    api = tweepy.API(auth)
+
+    try:
+        # Tweet
+        api.update_status("ChatGPT is currently AVAILABLE!")
+        print("Tweet sent!")
+    except tweepy.TweepError as error:
+        print(f"Error sending tweet: {error}")
+
+previous_status = None
+while True:
+    model_status = check_model_availability()
+    if model_status and previous_status != "available":
+        tweet_availability_update()
+    previous_status = "available" if model_status else "at capacity"
+    time.sleep(30)
