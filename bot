@@ -4,7 +4,7 @@ import time
 
 def check_model_availability():
     # Replace this with your OpenAI API key
-    api_key = "your-api-key"
+    api_key = "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"
 
     headers = {
         "Authorization": f"Bearer {api_key}"
